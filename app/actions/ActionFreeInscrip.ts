@@ -9,6 +9,7 @@ export async function ActionFreeInscrip(data: {
   captchaToken: string;
 }) {
   try {
+    
     // verifier le captcha
     const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
       method: "POST",
