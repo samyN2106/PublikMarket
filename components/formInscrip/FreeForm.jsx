@@ -35,7 +35,7 @@ export default function FreeForm() {
       const reponse = await ActionFreeInscrip(data);
       if (!reponse.success) setErrorServeur(reponse.error);
       if (reponse.success) {
-        ActionEnvoiEmail({ email: reponse.email });
+        ActionEnvoiEmail(reponse.email);
         createCookie({
           NomCookies: "myapp_session",
           CookiesValue: reponse.boutiqueId,

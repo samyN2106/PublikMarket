@@ -1,6 +1,5 @@
 "use server";
 import { prisma } from "@/lib/prisma";
-import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
 
 export async function ActionFreeInscrip(data: {

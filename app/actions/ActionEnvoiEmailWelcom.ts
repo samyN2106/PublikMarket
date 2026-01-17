@@ -10,7 +10,6 @@ export default async function ActionEnvoiEmail(email: string) {
     where: { email: Email },
   });
 
-
   if (!boutique) return { success: false, error: "Utilisateur non trouve" };
 
   //Générer un token sécurisé
