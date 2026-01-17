@@ -69,25 +69,12 @@ export async function ActionFreeInscrip(data: {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 5);
 
-    // inserer l'utilisateur dans supabase auth
-    const { data: dataSupabase, error: errSupabase } =
-      await supabase.auth.signUp({
-        email: email,
-        password: data.password,
-      });
-    if (errSupabase || !dataSupabase.user?.id) {
-      return {
-        success: false,
-        error: errSupabase?.message || "Erreur Supabase.",
-      };
-    }
     //  create l'utilisateur dans la base de donnees
     const Boutique = await prisma.boutique.create({
       data: {
         name: data.boutique,
         email: email,
         password: hashedPassword,
-        supabaseId: dataSupabase.user.id,
       },
     });
 

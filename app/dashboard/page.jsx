@@ -14,7 +14,7 @@ export default async function Dashboard() {
   const boutiqueId = String(session);
 
   const reponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/recupPaiement/${boutiqueId}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/recupPaiement?boutiqueId=${boutiqueId}`,
     {
       cache: "no-store",
     }

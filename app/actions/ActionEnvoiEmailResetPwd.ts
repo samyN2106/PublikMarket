@@ -35,7 +35,7 @@ export default async function ActionEnvoiEmail(emailDePwdForgot: string) {
       <h2 style="color:#9e86ba;">PublikMarket</h2>
       <img src="${process.env.NEXT_PUBLIC_BASE_URL}/og-default.png" alt="Logo PublikMarket" style="width:120px; margin:20px auto;" />
       <p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
-      <a href="${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}"
+      <a href="${process.env.NEXT_PUBLIC_BASE_URL}/reset-password/${token}"
          style="background-color:#9e86ba; color:#fff; font-weight:bold; padding:12px 15px; 
                 font-size:17px; border-radius:50px; text-decoration:none; display:inline-block;">
         Réinitialiser

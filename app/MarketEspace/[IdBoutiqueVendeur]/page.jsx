@@ -23,12 +23,6 @@ export default function EspaceVente() {
     query,
   } = useGestionSearchProduit();
 
-  // if (produits) {
-  //   setFirstProduitBoutique(
-  //     produits.find((pd) => pd.boutiqueId == IdBoutiqueVendeur)
-  //   );
-  // }
-
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
@@ -48,7 +42,7 @@ export default function EspaceVente() {
   useEffect(() => {
     async function fetchProduitsBoutique() {
       const reponse = await fetch(
-        `/api/recupUniqueProduitsBoutique/${IdBoutiqueVendeur}`
+        `/api/recupUniqueProduitsBoutique?IdBoutiqueVendeur=${IdBoutiqueVendeur}`
       );
       const result = await reponse.json();
       if (!reponse.ok) {

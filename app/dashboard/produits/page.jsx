@@ -14,7 +14,7 @@ export default async function Produit() {
   if (!session) redirect("/");
 
   const reponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/recupProduitsBoutique/${session}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/recupProduitsBoutique?IdBoutiqueVendeur=${session}`,
     {
       cache: "no-store",
     }

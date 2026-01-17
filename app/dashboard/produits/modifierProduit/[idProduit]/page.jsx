@@ -23,7 +23,7 @@ export default function MdofifProduit() {
 
   useEffect(() => {
     async function fetchProduit() {
-      const reponse = await fetch(`/api/produit/${idProduit}`);
+      const reponse = await fetch(`/api/produit?$idProduit={idProduit}`);
       const result = await reponse.json();
       if (reponse.ok) {
         setProduit(result.produit);

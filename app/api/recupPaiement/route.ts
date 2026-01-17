@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { boutiqueId: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { boutiqueId } = await params;
+    const { searchParams } = new URL(request.url);
+    const boutiqueId = searchParams.get("boutiqueId") as string;
 
     const paiement = await prisma.payment.findUnique({
       where: { boutiqueId: parseInt(boutiqueId) },

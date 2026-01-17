@@ -2,8 +2,8 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import useVerifierPwd from "@/hooks/useVerifierPwd";
-import { useSearchParams } from "next/navigation";
 import ActionUpdatePassword from "@/app/actions/ActionUpdate-password";
+import { useParams } from "next/navigation";
 export default function ResetPasswordPage() {
   const {
     register,
@@ -11,7 +11,8 @@ export default function ResetPasswordPage() {
     watch,
     formState: { errors },
   } = useForm();
-  const token = useSearchParams().get("token");
+
+  const { token } = useParams();
   const [pending, setPending] = useState(false);
   const [motDePassChanged, setMotDePassChanged] = useState(false);
 

@@ -6,7 +6,7 @@ import { useTraiterImageProduit } from "@/hooks/useTraiterImageProduit";
 import { ActionAddProduit } from "@/app/actions/ActionAddProduit";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Connexion from "@/app/actions/connexion";
+
 
 export default function AjouterProduit() {
   const { setFile, imageUrl, erreurFile } = useTraiterImageProduit();
@@ -15,7 +15,6 @@ export default function AjouterProduit() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
-  const [pending, setPending] = useState(false);
   const [ficher, setFicher] = useState(null);
   const [errorServeur, setErrorServeur] = useState(null);
   const router = useRouter();
@@ -76,16 +75,7 @@ export default function AjouterProduit() {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-6 rounded-xl relative  w-full"
       >
-        {/* {pending ? (
-          <div className=" absolute inset-0 bg-red-500">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel
-            praesentium possimus delectus distinctio, iste nulla doloribus fuga
-            tenetur quos quo iusto quam recusandae placeat quae soluta maxime
-            aspernatur omnis illum.
-          </div>
-        ) : (
-          ""
-        )} */}
+
 
         {/* champs nom produit */}
         <div className=" mb-4">

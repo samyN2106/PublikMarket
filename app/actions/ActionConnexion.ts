@@ -9,6 +9,7 @@ export default async function ActionConnexion(data: {
   captchaToken: string;
 }) {
   try {
+    // verifier le captcha
     const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -26,6 +27,7 @@ export default async function ActionConnexion(data: {
       };
     }
 
+    // verifier si tous les champs sont remplis
     const boutique = await prisma.boutique.findUnique({
       where: { email: data.email },
     });

@@ -15,7 +15,6 @@ model Boutique {
   password    String
   resetToken     String?  @unique
   resetTokenExp  DateTime?
-  supabaseId  String?  @unique
   createdAt DateTime  @default(now())
   payment   Payment?
   products  Product[]

@@ -5,7 +5,7 @@ export async function generateMetadata({ params }) {
   const { idProduit } = await params;
 
   const reponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/produit/${idProduit}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/produit?idProduit=${idProduit}`,
     {
       cache: "no-store",
     }
@@ -24,7 +24,7 @@ export default async function Espaceproduit({ params }) {
   const { idProduit } = await params;
 
   const reponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/produit/${idProduit}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/produit?idProduit=${idProduit}`,
     {
       cache: "no-store",
     }
