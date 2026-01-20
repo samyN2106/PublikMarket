@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse,NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 export default async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
