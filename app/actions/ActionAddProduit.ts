@@ -1,7 +1,14 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
-export async function ActionAddProduit(data: {
+export async function ActionAddProduit({
+  nomProduit,
+  description,
+  prixProduit,
+  numeroAcontacter,
+  pointDeLivraison,
+  image,
+}: {
   nomProduit: string;
   description: string;
   prixProduit: string;
@@ -10,6 +17,20 @@ export async function ActionAddProduit(data: {
   image: string;
 }) {
   try {
+    if (
+      !nomProduit ||
+      !description ||
+      !prixProduit ||
+      !numeroAcontacter ||
+      !pointDeLivraison ||
+      !image
+    ) {
+      return {
+        success: false,
+        message: "Tous les champs sont obligatoires",
+      };
+    }
+
     const setCookies = await cookies();
     const session = setCookies.get("myapp_session")?.value;
     const boutiqueId = session || "";
@@ -35,12 +56,12 @@ export async function ActionAddProduit(data: {
       await prisma.product.create({
         data: {
           boutiqueId: parseInt(boutiqueId),
-          nomProduit: data.nomProduit,
-          description: data.description,
-          price: data.prixProduit,
-          numAContacter: data.numeroAcontacter,
-          pointLivraison: data.pointDeLivraison,
-          image: data.image,
+          nomProduit: nomProduit,
+          description: description,
+          price: prixProduit,
+          numAContacter: numeroAcontacter,
+          pointLivraison: pointDeLivraison,
+          image: image,
         },
       });
 

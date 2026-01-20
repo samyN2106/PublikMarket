@@ -9,10 +9,18 @@ export default function Sidebar() {
   const { showSidebar, setShowSidebar } = useDashboardContext();
   const [showBlocDeconnexion, setShowBlocDeconnexion] = useState(false);
   const router = useRouter();
+  const [pending, setPending] = useState(false);
 
   const deconnexion = async () => {
-    deleteCookie();
-    router.push("/connexion");
+    setPending(true);
+    try {
+      deleteCookie();
+      router.push("/connexion");
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
@@ -37,7 +45,7 @@ export default function Sidebar() {
                 onClick={deconnexion}
                 className="px-4 py-2 bg-[#9e86ba] text-white rounded hover:bg-[#b7b2bd]"
               >
-                Valider
+                {pending ? "Déconnexion..." : "Valider"}
               </button>
             </div>
           </div>

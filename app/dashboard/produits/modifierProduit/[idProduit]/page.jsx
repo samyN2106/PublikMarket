@@ -4,7 +4,6 @@ import deleteProduit from "@/app/actions/ActionDeleteProduit";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import NavbarDashboard from "@/components/NavbarDashboard";
-import { useForm } from "react-hook-form";
 import { useTraiterImageProduit } from "@/hooks/useTraiterImageProduit";
 import ModifierProduit from "@/app/actions/ActionModifierProduit";
 import { useRouter } from "next/navigation";
@@ -15,15 +14,21 @@ export default function MdofifProduit() {
   const [produit, setProduit] = useState(null);
   const [confirmerSupprimerProduit, setConfirmerSupprimerProduit] =
     useState(false);
-  const [loading, setLoading] = useState(false);
-  const [ficher, setFicher] = useState(null);
-  const { register, handleSubmit } = useForm();
-  const [erreurForm, setErreurForm] = useState("");
+  const [pending, setPending] = useState(false);
+
+  const [nomProduit, setNomProduit] = useState("");
+  const [description, setDescription] = useState("");
+  const [prixProduit, setPrixProduit] = useState("");
+  const [numeroAcontacter, setNumeroAcontacter] = useState("");
+  const [pointDeLivraison, setPointDeLivraison] = useState("");
   const { setFile, imageUrl, erreurFile } = useTraiterImageProduit();
+
+  const [ficher, setFicher] = useState(null);
+  const [erreurForm, setErreurForm] = useState("");
 
   useEffect(() => {
     async function fetchProduit() {
-      const reponse = await fetch(`/api/produit?$idProduit={idProduit}`);
+      const reponse = await fetch(`/api/produit?idProduit=${idProduit}`);
       const result = await reponse.json();
       if (reponse.ok) {
         setProduit(result.produit);
@@ -37,35 +42,50 @@ export default function MdofifProduit() {
     router.push("/dashboard/produits");
   }
 
-  const onSubmit = async (data) => {
-    data.id = idProduit;
-    if (ficher) setFile(ficher);
-    if (!ficher) {
-      data.image = produit.image;
-      const reponse = await ModifierProduit(data);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      if (!reponse.success) {
-        setLoading(false);
-        setErreurForm(reponse.error);
-      } else {
-        setLoading(false);
+    if (!ficher) {
+      setPending(true);
+      const reponse = await ModifierProduit({
+        idProduit,
+        nomProduit,
+        description,
+        prixProduit,
+        numeroAcontacter,
+        pointDeLivraison,
+        image: produit.image,
+      });
+
+      if (reponse.success) {
+        setPending(false);
         router.push("/dashboard/produits");
+      } else {
+        setPending(false);
+        setErreurForm(reponse.error);
       }
     }
-    if (ficher && imageUrl) {
-      data.image = imageUrl;
-      const reponse = await ModifierProduit(data);
-      const result = reponse.json();
 
-      if (!reponse.success) {
-        setLoading(false);
-        setErreurForm(result.error);
-      } else {
-        setLoading(false);
+    if (ficher) setFile(ficher);
+
+    if (ficher && imageUrl) {
+      const reponse = await ModifierProduit({
+        idProduit,
+        nomProduit,
+        description,
+        prixProduit,
+        numeroAcontacter,
+        pointDeLivraison,
+        image: imageUrl,
+      });
+      if (reponse.success) {
+        setPending(false);
         router.push("/dashboard/produits");
+      } else {
+        setPending(false);
+        setErreurForm(reponse.error);
       }
     } else {
-      setLoading(false);
       if (erreurFile) console.error(erreurFile.message);
       return (
         <main className="flex flex-col p-[30px] w-full justify-center  items-center min-[1100px]:ml-64 ">
@@ -141,26 +161,14 @@ export default function MdofifProduit() {
           {/* formulaire des donnees du produit */}
           <div className="w-full">
             <form
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={handleSubmit}
               className="bg-white p-6 rounded-xl relative shadow-md mb-10 mx-auto "
             >
-              {/* afficher le  chargement */}
-              {loading ? (
-                <div className="absolute top-[50%] left-[50%] translate-[-50%]">
-                  <Image
-                    src="/iconeLoading.gif"
-                    width={60}
-                    height={60}
-                    alt="Loading"
-                  />
-                </div>
-              ) : (
-                ""
-              )}
-
               <div className="mb-4">
                 <input
-                  {...register("nomProduit")}
+                  onChange={(e) => {
+                    setNomProduit(e.target.value);
+                  }}
                   type="text"
                   defaultValue={produit.nomProduit}
                   placeholder="Nom du produit"
@@ -169,7 +177,9 @@ export default function MdofifProduit() {
               </div>
               <div className=" mb-4">
                 <textarea
-                  {...register("description")}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                  }}
                   defaultValue={produit.description}
                   placeholder="Description du produit"
                   className="w-full border p-2 rounded-lg  outline-0"
@@ -177,7 +187,9 @@ export default function MdofifProduit() {
               </div>
               <div className=" mb-4">
                 <input
-                  {...register("prixProduit")}
+                  onChange={(e) => {
+                    setPrixProduit(e.target.value);
+                  }}
                   type="number"
                   defaultValue={produit.prixProduit}
                   placeholder="Prix du produit ex:40.000 FCFA "
@@ -187,7 +199,9 @@ export default function MdofifProduit() {
               </div>
               <div className=" mb-4">
                 <input
-                  {...register("numeroAcontacter")}
+                  onChange={(e) => {
+                    setNumeroAcontacter(e.target.value);
+                  }}
                   type="text"
                   defaultValue={produit.numeroAcontacter}
                   placeholder="Numero a contacter pour le produit"
@@ -196,7 +210,9 @@ export default function MdofifProduit() {
               </div>
               <div className=" mb-4">
                 <input
-                  {...register("pointDeLivraison")}
+                  onChange={(e) => {
+                    setPointDeLivraison(e.target.value);
+                  }}
                   type="text"
                   defaultValue={produit.pointDeLivraison}
                   placeholder="point de livraison. Ex: Abidjan,Bouake......"
@@ -221,13 +237,12 @@ export default function MdofifProduit() {
               </button>
 
               <button
-                onClick={() => {
-                  setLoading(true);
-                }}
                 type="submit"
                 className={`bg-[#9e86ba] text-white px-4 py-2 font-semibold rounded-lg hover:bg-[#9d92a8] }`}
               >
-                Modifier Produit
+                {pending
+                  ? "Modification en cours.........."
+                  : "Modifier Produit"}
               </button>
             </form>
           </div>

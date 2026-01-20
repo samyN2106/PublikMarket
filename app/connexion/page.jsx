@@ -102,6 +102,7 @@ export default function Connexion() {
                 Se connecter
               </button>
               <button
+                disabled={pending}
                 type="submit"
                 className="cursor-pointer w-full py-2.5 px-4 rounded-md flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-sm text-white font-medium transition-colors"
               >

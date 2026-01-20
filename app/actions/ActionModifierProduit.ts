@@ -4,8 +4,16 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 // import { getProduits } from "@/app/getProduits";
 
-export default async function ModifierProduit(data: {
-  id: string;
+export default async function ModifierProduit({
+  idProduit,
+  nomProduit,
+  description,
+  prixProduit,
+  numeroAcontacter,
+  pointDeLivraison,
+  image,
+}: {
+  idProduit: string;
   nomProduit: string;
   description: string;
   prixProduit: string;
@@ -37,10 +45,10 @@ export default async function ModifierProduit(data: {
 
     if (nbrProduitRestant > 0) {
       const reponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/produit/${data.id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/produit?idProduit=${idProduit}`,
         {
           cache: "no-store",
-        }
+        },
       );
 
       const result = await reponse.json();
@@ -48,109 +56,103 @@ export default async function ModifierProduit(data: {
       const produitUpdate = result.produit;
 
       if (
-        produitUpdate.description === data.description &&
-        produitUpdate.image === data.image &&
-        produitUpdate.price === data.prixProduit &&
-        produitUpdate.nomProduit === data.nomProduit &&
-        produitUpdate.numAContacter === data.numeroAcontacter &&
-        produitUpdate.pointLivraison === data.pointDeLivraison
+        produitUpdate.description === description &&
+        produitUpdate.image === image &&
+        produitUpdate.price === prixProduit &&
+        produitUpdate.nomProduit === nomProduit &&
+        produitUpdate.numAContacter === numeroAcontacter &&
+        produitUpdate.pointLivraison === pointDeLivraison
       ) {
         return {
-          succes: false,
+          success: false,
           error: "Vous n'avez rien modifier",
         };
       } else if (
-        produitUpdate.description !== data.description &&
-        data.description !== ""
+        produitUpdate.description !== description &&
+        description !== ""
       ) {
         await prisma.product.update({
           where: {
-            id: parseInt(data.id),
+            id: parseInt(idProduit),
           },
           data: {
-            description: data.description,
+            description: description,
           },
         });
 
         return {
-          succes: true,
+          success: true,
           message: "produit modifie",
         };
-      } else if (produitUpdate.image !== data.image && data.image !== "") {
+      } else if (produitUpdate.image !== image && image !== "") {
         await prisma.product.update({
           where: {
-            id: parseInt(data.id),
+            id: parseInt(idProduit),
           },
           data: {
-            image: data.image,
+            image: image,
           },
         });
         return {
-          succes: true,
+          success: true,
           message: "produit modifie",
         };
-      } else if (
-        produitUpdate.price !== data.prixProduit &&
-        data.prixProduit !== ""
-      ) {
+      } else if (produitUpdate.price !== prixProduit && prixProduit !== "") {
         await prisma.product.update({
           where: {
-            id: parseInt(data.id),
+            id: parseInt(idProduit),
           },
           data: {
-            price: data.prixProduit,
+            price: prixProduit,
           },
         });
         return {
-          succes: true,
+          success: true,
           message: "produit modifie",
         };
-      } else if (
-        produitUpdate.nomProduit !== data.nomProduit &&
-        data.nomProduit !== ""
-      ) {
+      } else if (produitUpdate.nomProduit !== nomProduit && nomProduit !== "") {
         await prisma.product.update({
           where: {
-            id: parseInt(data.id),
+            id: parseInt(idProduit),
           },
           data: {
-            nomProduit: data.nomProduit,
+            nomProduit: nomProduit,
           },
         });
         return {
-          succes: true,
+          success: true,
           message: "produit modifie",
         };
       } else if (
-        produitUpdate.numAContacter !== data.numeroAcontacter &&
-        data.numeroAcontacter !== ""
+        produitUpdate.numAContacter !== numeroAcontacter &&
+        numeroAcontacter !== ""
       ) {
         await prisma.product.update({
           where: {
-            id: parseInt(data.id),
+            id: parseInt(idProduit),
           },
           data: {
-            numAContacter: data.numeroAcontacter,
+            numAContacter: numeroAcontacter,
           },
         });
         return {
-          succes: true,
+          success: true,
           message: "produit modifie",
         };
       } else if (
-        produitUpdate.pointLivraison !== data.pointDeLivraison &&
-        data.pointDeLivraison !== ""
+        produitUpdate.pointLivraison !== pointDeLivraison &&
+        pointDeLivraison !== ""
       ) {
         await prisma.product.update({
           where: {
-            id: parseInt(data.id),
+            id: parseInt(idProduit),
           },
           data: {
-            pointLivraison: data.pointDeLivraison,
+            pointLivraison: pointDeLivraison,
           },
         });
         return {
-          succes: true,
+          success: true,
           message: "produit modifie",
         };
       }
@@ -162,14 +164,14 @@ export default async function ModifierProduit(data: {
       });
 
       return {
-        succes: false,
+        success: false,
         error: "Vous n'avez pas d'abonnement",
       };
     }
   } catch (error) {
     console.log(error);
     return {
-      succes: false,
+      success: false,
       error: "Erreur sur le serveur,ressayez plutard",
     };
   }

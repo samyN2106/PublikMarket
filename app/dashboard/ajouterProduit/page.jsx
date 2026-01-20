@@ -1,21 +1,22 @@
 "use client";
 import NavbarDashboard from "@/components/NavbarDashboard";
-import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useTraiterImageProduit } from "@/hooks/useTraiterImageProduit";
 import { ActionAddProduit } from "@/app/actions/ActionAddProduit";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-
 export default function AjouterProduit() {
   const { setFile, imageUrl, erreurFile } = useTraiterImageProduit();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
+  const [nomProduit, setNomProduit] = useState("");
+  const [description, setDescription] = useState("");
+  const [prixProduit, setPrixProduit] = useState("");
+  const [numeroAcontacter, setNumeroAcontacter] = useState("");
+  const [pointDeLivraison, setPointDeLivraison] = useState("");
   const [ficher, setFicher] = useState(null);
+  const [clicked, setClicked] = useState(false);
+
+  const [pending, setPending] = useState(false);
   const [errorServeur, setErrorServeur] = useState(null);
   const router = useRouter();
 
@@ -23,16 +24,28 @@ export default function AjouterProduit() {
     setFile(ficher);
   }, [ficher]);
 
-  const onSubmit = async (data) => {
-    try {
-      if (imageUrl) {
-        data.image = imageUrl;
-        const reponse = await ActionAddProduit(data);
-        if (!reponse.success) setErrorServeur(reponse.error);
-        if (reponse.success) router.push("/dashboard/produits");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setClicked(true);
+    // try {
+    if (imageUrl) {
+      setPending(true);
+      const reponse = await ActionAddProduit({
+        nomProduit,
+        description,
+        prixProduit,
+        numeroAcontacter,
+        pointDeLivraison,
+        image: imageUrl,
+      });
+
+      if (!reponse.success) {
+        setErrorServeur(reponse.message);
       }
-    } catch (error) {
-      console.error("Erreur lors de l'ajout du produit :", error);
+      if (reponse.success) {
+        setPending(false);
+        router.push("/dashboard/produits");
+      }
     }
   };
 
@@ -72,24 +85,21 @@ export default function AjouterProduit() {
       </div>
 
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit}
         className="bg-white p-6 rounded-xl relative  w-full"
       >
-
-
         {/* champs nom produit */}
         <div className=" mb-4">
           <input
-            {...register("nomProduit", {
-              required: "Donnez un nom au produit",
-            })}
+            onChange={(e) => setNomProduit(e.target.value)}
+            value={nomProduit}
             type="text"
             placeholder="Nom du produit"
             className="w-full border p-2 rounded-lg  outline-0"
           />
-          {errors.nomProduit && (
+          {!nomProduit && clicked && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.nomProduit.message}
+              Donnez un nom au produit
             </p>
           )}
         </div>
@@ -97,50 +107,43 @@ export default function AjouterProduit() {
         {/* champs description produit */}
         <div className=" mb-4">
           <textarea
-            {...register("description", {
-              required: "Description requise",
-            })}
+            onChange={(e) => setDescription(e.target.value)}
+            value={description}
             placeholder="Description du produit"
             className="w-full border p-2 rounded-lg  outline-0"
           />
-          {errors.description && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.description.message}
-            </p>
+          {!description && clicked && (
+            <p className="text-red-500 text-sm mt-1">Description requise</p>
           )}
         </div>
 
         {/* champs prix produit */}
         <div className=" mb-4">
           <input
-            {...register("prixProduit", {
-              required: "Prix requis",
-            })}
+            onChange={(e) => setPrixProduit(e.target.value)}
+            value={prixProduit}
             type="number"
             placeholder="Prix du produit ex:40.000"
             className="w-full border p-2 rounded-lg  outline-0"
             min="1"
           />
-          {errors.prixProduit && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.prixProduit.message}
-            </p>
+          {!prixProduit && clicked && (
+            <p className="text-red-500 text-sm mt-1">Prix requis</p>
           )}
         </div>
 
         {/* champs numero a contacter */}
         <div className=" mb-4">
           <input
-            {...register("numeroAcontacter", {
-              required: "Entrez un numero a contacter",
-            })}
+            onChange={(e) => setNumeroAcontacter(e.target.value)}
+            value={numeroAcontacter}
             type="text"
             placeholder="Numero a contacter pour le produit"
             className="w-full border p-2 rounded-lg outline-0"
           />
-          {errors.numeroAcontacter && (
+          {!numeroAcontacter && clicked && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.numeroAcontacter.message}
+              Numero a contacter requis
             </p>
           )}
         </div>
@@ -148,16 +151,15 @@ export default function AjouterProduit() {
         {/* champs point de livraison */}
         <div className=" mb-4">
           <input
-            {...register("pointDeLivraison", {
-              required: "Champ requis",
-            })}
+            onChange={(e) => setPointDeLivraison(e.target.value)}
+            value={pointDeLivraison}
             type="text"
             placeholder="point de livraison. Ex: Abidjan,Bouake......"
             className="w-full border p-2 rounded-lg outline-0"
           />
-          {errors.pointDeLivraison && (
+          {!pointDeLivraison && clicked && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.pointDeLivraison.message}
+              Point de livraison requis
             </p>
           )}
         </div>
@@ -172,7 +174,7 @@ export default function AjouterProduit() {
             type="file"
             className="w-full border p-2 rounded-lg  outline-0"
           />
-          {!ficher && (
+          {!ficher && clicked && (
             <p className="text-red-500 text-sm mt-1">
               Choisissez une image pour le produit
             </p>
@@ -181,15 +183,15 @@ export default function AjouterProduit() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={pending}
           className={`px-4 py-2 font-semibold rounded-lg text-white
     ${
-      isSubmitting
+      pending
         ? "bg-gray-400 cursor-not-allowed"
         : "bg-[#9e86ba] hover:bg-[#9d92a8]"
     }`}
         >
-          {isSubmitting ? "Chargement..." : "Ajouter le produit"}
+          {pending ? "Chargement..." : "Ajouter le produit"}
         </button>
       </form>
     </main>

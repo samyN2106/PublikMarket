@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron-delete-payments?secret=publikmarketcronsecretkey12345",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}

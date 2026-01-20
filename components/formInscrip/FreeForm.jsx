@@ -13,10 +13,9 @@ export default function FreeForm() {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
   const passwordValue = watch("password", "");
-  const [pending, setPending] = useState(false);
   const [errorServeur, setErrorServeur] = useState(null);
   const router = useRouter();
   const { setValuePwd, niveauPwd, getBarColor } = useVerifierPwd();
@@ -30,24 +29,20 @@ export default function FreeForm() {
     if (!captchaToken)
       alert("Veuillez valider le reCAPTCHA avant de soumettre le formulaire.");
     data.captchaToken = captchaToken;
-    setPending(true);
+
     try {
       const reponse = await ActionFreeInscrip(data);
       if (!reponse.success) setErrorServeur(reponse.error);
       if (reponse.success) {
-        ActionEnvoiEmail(reponse.email);
         createCookie({
           NomCookies: "myapp_session",
           CookiesValue: reponse.boutiqueId,
         });
+        ActionEnvoiEmail(reponse.email);
         router.push("/produits");
-
-        // function pour creer le cookie apres l'inscription
       }
     } catch (error) {
       console.error("Erreur lors de l'inscription :", error);
-    } finally {
-      setPending(false);
     }
   };
 
@@ -197,11 +192,11 @@ export default function FreeForm() {
                 {/* bloc de soumission du formulaire */}
                 <div className="flex flex-col space-y-4 mt-4">
                   <button
-                    // disabled={pending || !captchaToken}
+                    disabled={isSubmitting}
                     type="submit"
                     className="cursor-pointer w-full py-2.5 px-4 rounded-md flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-sm text-white font-medium transition-colors"
                   >
-                    {pending
+                    {isSubmitting
                       ? "Inscription en cours..."
                       : "Commencer Gratuitement"}
                   </button>
